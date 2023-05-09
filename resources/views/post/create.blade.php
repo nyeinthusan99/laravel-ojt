@@ -5,7 +5,7 @@
   <div class="row justify-content-center">
     <div class="col-md-8">
         <div class="fw-bold mt-5">Create Post</div>
-          <form method="POST" action="{{ route('post.create') }}" id="myForm">
+          <form method="POST" action="{{ route('post.create') }}" id="myForm" enctype="multipart/form-data">
             @csrf
             <div class="form-group row my-3">
               <label for="title" class="col-md-4 col-form-label text-md-right required">Title<span class="text-danger ms-2">*</span></label>

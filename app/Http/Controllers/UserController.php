@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\UserEditRequest;
 use App\Http\Requests\UserCreateRequest;
 use App\Contracts\Services\UserServiceInterface;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -24,18 +25,29 @@ class UserController extends Controller
 
     public function createView()
     {
+        if(!session('persists')) {
+            session()->forget('createUserData');
+        }
         return view('user.create');
     }
 
     public function createSubmit(UserCreateRequest $request)
     {
         $request->validated();
-        session(['createUserData' => $request->all()]);
+
+        if($request->hasFile('profile')) {
+            $fileName = rand().'_'.now()->format('Y-m-d');
+            $request->file('profile')->storeAs('tmp', $fileName.'.'.$request->file('profile')->getClientOriginalExtension());
+            $request->merge(['profileImage' =>  $fileName.'.'.$request->file('profile')->getClientOriginalExtension()]);
+        }
+        session(['createUserData' => $request->except('profile')]);
+        //dd(session('createUserData'));
         return to_route('userCreate.confirm');
     }
 
     public function confirmView()
     {
+        session()->flash('persists', true);
         if (!session('createUserData')) {
             return redirect()->route('user.create');
         }
@@ -44,11 +56,15 @@ class UserController extends Controller
 
     }
 
-//     public function store(Request $request)
-//     {
-//         $this->userService->store($request);
-//         return redirect()->route('userlist');
-//     }
+     public function store(Request $request)
+     {
+        //dd(session('createUserData'));
+        // dd(storage_path('tmp') . session('createUserData')['profileImage']);
+
+         $request->merge(session('createUserData'));
+         $this->userService->store($request);
+         return redirect()->route('userlist');
+     }
 
         public function delete($userId)
         {
@@ -67,6 +83,10 @@ class UserController extends Controller
 
         public function editProfileView()
         {
+            if(!session('persists')) {
+                session()->forget('createUserData');
+            }
+
             $userId = Auth::user()->id;
             $user = $this->userService->getUserById($userId);
             return view('user.edit',['user' => $user]);
@@ -75,22 +95,34 @@ class UserController extends Controller
         public function editProfileSubmit(UserEditRequest $request)
         {
             $request->validated();
-            //session(['editUserData' => $request->all()]);
+
+            if($request->hasFile('profile')) {
+                $fileName = rand().'_'.now()->format('Y-m-d');
+                $request->file('profile')->storeAs('tmp', $fileName.'.'.$request->file('profile')->getClientOriginalExtension());
+                $request->merge(['profileImage' =>  $fileName.'.'.$request->file('profile')->getClientOriginalExtension()]);
+            }
+            session(['editUserData' => $request->except('profile')]);
+
             return to_route('userProfileUpdate.confirm');
         }
 
-        public function editProfileConfirmView($postId)
+        public function editProfileConfirmView()
         {
-            // if (!session('editPostData')) {
-            //     return redirect()->route('post.edit');
-            // }
+            $userId = Auth::user()->id;
+            $user = $this->userService->getUserById($userId);
+            
+            session()->flash('persists', true);
+            if (!session('editUserData')) {
+                return redirect()->route('user.edit');
+            }
 
-            return view('user.edit-confirm');
+            return view('user.edit-confirm',['user' => $user]);
         }
 
-        // public function editProfileStore(Request $request)
-        // {
-        //     $this->UserService->updatePost($request);
-        //     return redirect()->route('userlist');
-        // }
+        public function editProfileStore(Request $request)
+        {
+            $request->merge(session('editUserData'));
+            $this->userService->updateUser($request);
+            return redirect()->route('userlist');
+        }
  }

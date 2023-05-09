@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Dao;
+use File;
 use App\Models\User;
-use App\Contracts\Dao\UserDaoInterface;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use App\Contracts\Dao\UserDaoInterface;
 
 class UserDao implements UserDaoInterface
 {
@@ -60,5 +62,58 @@ class UserDao implements UserDaoInterface
     {
         $user = User::where('id',$userId)->first();
         return $user;
+    }
+
+    public function store($request) {
+        $user = new User();
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = bcrypt($request->password);
+        $user->profile = $request->profileImage;
+        $user->type = $request->type ;
+        $user->phone = $request->phone;
+        $user->address = $request->address;
+        $user->dob = $request->dob;
+        $user->created_user_id = $request->user()->id;
+        $user->updated_user_id = $request->user()->id;
+
+        $user->save();
+
+        if (!File::isDirectory(storage_path('app/public/'.$user->id))) {
+            \File::makeDirectory(storage_path('app/public/'.$user->id));
+        }
+        \File::move(
+            storage_path('app/public/tmp') .DIRECTORY_SEPARATOR. $user->profile,
+            storage_path('app/public/'.$user->id) .DIRECTORY_SEPARATOR .  $user->profile,
+        );
+
+        return $user;
+    }
+
+    public function updateUser($request) {
+        $user = User::find(Auth::user()->id);
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->profile = $request->profileImage;
+        $user->type = $request->type ;
+        $user->phone = $request->phone;
+        $user->address = $request->address;
+        $user->dob = $request->dob;
+        $user->updated_user_id = $request->user()->id;
+
+        $user->save();
+
+        if (!File::isDirectory(storage_path('app/public/'.$user->id))) {
+            \File::makeDirectory(storage_path('app/public/'.$user->id));
+        }
+        \File::move(
+            storage_path('app/public/tmp') .DIRECTORY_SEPARATOR. $user->profile,
+            storage_path('app/public/'.$user->id) .DIRECTORY_SEPARATOR .  $user->profile,
+        );
+
+        return $user;
+
     }
 }

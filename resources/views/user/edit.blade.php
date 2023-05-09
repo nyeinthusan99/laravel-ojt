@@ -4,14 +4,14 @@
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-md-8">
-        <div class="fw-bold mt-5">Create User</div>
-          <form method="POST" action="{{ route('user.create') }}" id="myForm">
+        <div class="fw-bold mt-5">Edit User</div>
+          <form method="POST" action="{{ route('userProfile.edit') }}" id="myForm" enctype="multipart/form-data">
             @csrf
             <div class="form-group row my-3">
               <label for="name" class="col-md-4 col-form-label text-md-right required">Name<span class="text-danger ms-2">*</span></label>
 
               <div class="col-md-6">
-                <input id="name" type="text" class="form-control" name="name"value="{{old('name', $user->name)}}">
+                <input id="name" type="text" class="form-control" name="name" value="{{old('name', $user->name)}}">
                 @error('name')
                     <span class="text-danger" id="err">{{ $message }}</span>
                 @enderror
@@ -28,7 +28,7 @@
                 </div>
               </div>
 
-             
+
               <div class="form-group row my-3">
                 <label for="type" class="col-md-4 col-form-label text-md-right required">Type<span class="text-danger ms-2">*</span></label>
 
@@ -83,6 +83,18 @@
                   @error('profile')
                       <span class="text-danger" id="err">{{ $message }}</span>
                   @enderror
+                  <div id="previewImage">
+                    @if ($user->profile)
+                        <img src="{{ asset('storage/' . $user->id . '/' . $user->profile) }}" alt="profile" class="img-fluid">
+                    @elseif (isset(session('editUserData')['profileImage']))
+                        <img class="img-fluid"
+                            src="{{ asset('storage/tmp/' . session('editUserData')['profileImage']) }}"
+                            alt="image">
+                    @else
+                        <img src="{{ asset('storage/man.png') }}" alt="Default profile image" class="img-fluid ">
+                    @endif
+                </div>
+
                 </div>
               </div>
 
@@ -101,6 +113,24 @@
     </div>
   </div>
 </div>
+
+<script>
+    const profile = document.querySelector('#profile');
+    profile.addEventListener('change', function(e) {
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(e.target.files[0])
+
+        fileReader.onload = function(e) {
+            const image = new Image();
+            image.src = e.target.result;
+            image.classList.add('img-fluid')
+            let div=  document.createElement('div')
+            div.append(image)
+            document.querySelector('#previewImage').innerHTML = div.innerHTML;
+        }
+
+    })
+</script>
 
 
 @endsection

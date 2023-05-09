@@ -5,7 +5,7 @@
   <div class="row justify-content-center">
     <div class="col-md-8">
         <div class="fw-bold mt-5">Create User</div>
-          <form method="POST" action="{{ route('user.create') }}" id="myForm">
+          <form method="POST" action="{{ route('user.store') }}" id="myForm">
             @csrf
             <div class="form-group row my-3">
               <label for="name" class="col-md-4 col-form-label text-md-right required">Name<span class="text-danger ms-2">*</span></label>
@@ -104,10 +104,17 @@
                 <label for="profile" class="col-md-4 col-form-label text-md-right required">Profile</label>
 
                 <div class="col-md-6">
-                  <input id="profile"  type="file" class="form-control" name="profile" value="{{ old('profile') }}">
+                  {{--<input id="profile"  type="file" class="form-control" name="profile" value="{{ old('profile') }}">
                   @error('profile')
                       <span class="text-danger" id="err">{{ $message }}</span>
-                  @enderror
+                  @enderror--}}
+                  <div id="previewImage">
+                    @if (isset(session('createUserData')['profileImage']))
+                        <img class="img-fluid"
+                            src="{{ asset('storage/tmp/' . session('createUserData')['profileImage']) }}"
+                            alt="image">
+                    @endif
+                </div>
                 </div>
               </div>
 
@@ -125,7 +132,6 @@
     </div>
   </div>
 </div>
-
 
 @endsection
 

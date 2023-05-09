@@ -3,7 +3,7 @@
 @section('content')
     <div class="container mt-5">
         <div class="row d-flex">
-            <form action="{{ route('userlist') }}" method="GET" class="col-md-10 d-flex">
+            <form action="{{ route('userlist') }}" method="GET" class="col-md-9 d-flex">
                 @csrf
                 <div class="col-md-2 me-2">
                     <input type="text" value="{{ request()->input('name') }}" placeholder="Name" class="form-control" name="name" id="name">
@@ -11,13 +11,13 @@
                 <div class="col-md-2 me-2">
                     <input type="text" value="{{ request()->input('email') }}" placeholder="Email" class="form-control" name="email" id="email">
                 </div>
-                <div class="col-md-3 me-3">
+                <div class="col-md-2 me-3">
                     <input type="date" value="{{ request()->input('created_from') }}" placeholder="Created From" class="form-control" name="created_from" id="created_from">
                 </div>
-                <div class="col-md-3 me-3">
+                <div class="col-md-2 me-3">
                     <input type="date" value="{{ request()->input('created_to') }}" placeholder="Created To" class="form-control" name="created_to" id="created_to">
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-2">
                     <button type="submit" class="btn btn-primary form-control">Search</button>
                 </div>
             </form>
@@ -61,10 +61,10 @@
                             </a>
                         </td>
                         <td>{{ $user->email }}</td>
-                        <td>{{ $user->created_user}}</td>
-                        <td>{{ $user->phone }}</td>
-                        <td>{{ $user->dob }}</td>
-                        <td>{{ $user->address }}</td>
+                        <td>{{ $user->created_user }}</td>
+                        <td>{{ $user->phone ?? '-' }}</td>
+                        <td>{{ $user->dob ?? '-' }}</td>
+                        <td>{{ $user->address ?? '-' }}</td>
                         <td>{{ date('Y/m/d', strtotime($user->created_at)) }}</td>
                         <td>{{ date('Y/m/d', strtotime($user->updated_at)) }}</td>
                         {{-- <td>
@@ -93,35 +93,42 @@
                 <h5 class="modal-title" id="exampleModalLabel">User Detail</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body m-auto w-75">
                     <div class="col-md-12">
-                        <div class="row mb-2">
-                            <label class="col-md-4">Name</label>
-                            <label class="col-md-8">{{ $user->name }}</label>
-                        </div>
-                        <div class="row mb-2">
-                            <label class="col-md-4">Email</label>
-                            <label class="col-md-8">{{ $user->email }}</label>
-                        </div>
-                        <div class="row mb-2">
-                            <label class="col-md-4">Type</label>
-                            @if ( $user->type == 0)
-                            <label class="col-md-8">Admin</label>
+                        <div class=" mb-3 text-center">
+                            @if($user->profile)
+                            <img src="{{ asset('storage/' . $user->id . '/' . $user->profile) }}" alt="profile" class="img-fluid rounded-circle w-50 h-50">
                             @else
-                            <label class="col-md-8">User</label>
+                            <img src="{{ asset('storage/man.png') }}" alt="Default profile image" class="img-fluid w-50 h-50">
+                            @endif
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-md-7">Name</label>
+                            <label class="col-md-5">{{ $user->name }}</label>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-md-7">Email</label>
+                            <label class="col-md-5">{{ $user->email }}</label>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-md-7">Type</label>
+                            @if ( $user->type == 0)
+                            <label class="col-md-5">Admin</label>
+                            @else
+                            <label class="col-md-5">User</label>
                              @endif
                         </div>
-                        <div class="row mb-2">
-                            <label class="col-md-4">Phone</label>
-                            <label class="col-md-8">{{ $user->phone }}</label>
+                        <div class="row mb-3">
+                            <label class="col-md-7">Phone</label>
+                            <label class="col-md-5">{{ $user->phone ?? '-' }}</label>
                         </div>
-                        <div class="row mb-2">
-                            <label class="col-md-4">Date of Birth</label>
-                            <label class="col-md-8">{{ $user->dob }}</label>
+                        <div class="row mb-3">
+                            <label class="col-md-7">Date of Birth</label>
+                            <label class="col-md-5">{{ $user->dob ?? '-' }}</label>
                         </div>
-                        <div class="row mb-2">
-                            <label class="col-md-4">Address</label>
-                            <label class="col-md-8">{{ $user->address }}</label>
+                        <div class="row mb-3">
+                            <label class="col-md-7">Address</label>
+                            <label class="col-md-5">{{ $user->address ?? '-' }}</label>
                         </div>
                     </div>
                 </div>
@@ -142,40 +149,40 @@
                 <h5 class="modal-title" id="exampleModalLabel">Confirm Delete</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <h4 class="">Are you sure to delete?</h4>
-                    <div class="col-md-12">
-                        <div class="row mb-2">
-                            <label class="col-md-4">ID</label>
-                            <label class="col-md-8">{{ $user->id }}</label>
+                <div class="modal-body ">
+                    <h4 class="mb-3">Are you sure to delete?</h4>
+                    <div class="col-md-12 w-75 m-auto">
+                        <div class="row mb-3">
+                            <label class="col-md-7">ID</label>
+                            <label class="col-md-5">{{ $user->id }}</label>
                         </div>
-                        <div class="row mb-2">
-                            <label class="col-md-4">Title</label>
-                            <label class="col-md-8">{{ $user->name }}</label>
+                        <div class="row mb-3">
+                            <label class="col-md-7">Title</label>
+                            <label class="col-md-5">{{ $user->name }}</label>
                         </div>
-                        <div class="row mb-2">
-                            <label class="col-md-4">Description</label>
-                            <label class="col-md-8">{{ $user->email }}</label>
+                        <div class="row mb-3">
+                            <label class="col-md-7">Description</label>
+                            <label class="col-md-5">{{ $user->email }}</label>
                         </div>
-                        <div class="row mb-2">
-                            <label class="col-md-4">Type</label>
+                        <div class="row mb-3">
+                            <label class="col-md-7">Type</label>
                             @if ( $user->type == 0)
-                                <label class="col-md-8">Admin</label>
+                                <label class="col-md-5">Admin</label>
                             @else
-                                <label class="col-md-8">User</label>
+                                <label class="col-md-5">User</label>
                             @endif
                         </div>
-                        <div class="row mb-2">
-                            <label class="col-md-4">Phone</label>
-                            <label class="col-md-8">{{ $user->phone }}</label>
+                        <div class="row mb-3">
+                            <label class="col-md-7">Phone</label>
+                            <label class="col-md-5">{{ $user->phone ?? '-' }}</label>
                         </div>
-                        <div class="row mb-2">
-                            <label class="col-md-4">Date of Birth</label>
-                            <label class="col-md-8">{{ $user->dob }}</label>
+                        <div class="row mb-3">
+                            <label class="col-md-7">Date of Birth</label>
+                            <label class="col-md-5">{{ $user->dob ?? '-' }}</label>
                         </div>
-                        <div class="row mb-2">
-                            <label class="col-md-4">Address</label>
-                            <label class="col-md-8">{{ $user->address }}</label>
+                        <div class="row mb-3">
+                            <label class="col-md-7">Address</label>
+                            <label class="col-md-5">{{ $user->address ?? '-' }}</label>
                         </div>
                     </div>
                 </div>
