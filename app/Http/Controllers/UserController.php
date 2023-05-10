@@ -84,7 +84,7 @@ class UserController extends Controller
         public function editProfileView()
         {
             if(!session('persists')) {
-                session()->forget('createUserData');
+                session()->forget('editUserData');
             }
 
             $userId = Auth::user()->id;
@@ -96,10 +96,14 @@ class UserController extends Controller
         {
             $request->validated();
 
+            $oldProfile = Auth::user()->profile;
+            //dd($request);
             if($request->hasFile('profile')) {
                 $fileName = rand().'_'.now()->format('Y-m-d');
                 $request->file('profile')->storeAs('tmp', $fileName.'.'.$request->file('profile')->getClientOriginalExtension());
                 $request->merge(['profileImage' =>  $fileName.'.'.$request->file('profile')->getClientOriginalExtension()]);
+            }else {
+                $request->merge(['profileImage' =>  $oldProfile ]);
             }
             session(['editUserData' => $request->except('profile')]);
 
@@ -110,7 +114,7 @@ class UserController extends Controller
         {
             $userId = Auth::user()->id;
             $user = $this->userService->getUserById($userId);
-            
+
             session()->flash('persists', true);
             if (!session('editUserData')) {
                 return redirect()->route('user.edit');
@@ -122,6 +126,7 @@ class UserController extends Controller
         public function editProfileStore(Request $request)
         {
             $request->merge(session('editUserData'));
+
             $this->userService->updateUser($request);
             return redirect()->route('userlist');
         }

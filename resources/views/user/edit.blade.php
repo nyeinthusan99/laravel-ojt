@@ -79,20 +79,26 @@
                 <label for="profile" class="col-md-4 col-form-label text-md-right required">Profile</label>
 
                 <div class="col-md-6">
-                  <input id="profile"  type="file" class="form-control" name="profile" value="{{ old('profile') }}">
+                    {{-- <input type="hidden" value="{{$user->profile}}"  name="oldProfile"> --}}
+                  <input id="profile"  type="file" class="form-control" name="profile">
                   @error('profile')
                       <span class="text-danger" id="err">{{ $message }}</span>
                   @enderror
                   <div id="previewImage">
-                    @if ($user->profile)
-                        <img src="{{ asset('storage/' . $user->id . '/' . $user->profile) }}" alt="profile" class="img-fluid">
-                    @elseif (isset(session('editUserData')['profileImage']))
-                        <img class="img-fluid"
-                            src="{{ asset('storage/tmp/' . session('editUserData')['profileImage']) }}"
-                            alt="image">
-                    @else
-                        <img src="{{ asset('storage/man.png') }}" alt="Default profile image" class="img-fluid ">
-                    @endif
+                    @if (isset(session('editUserData')['profileImage']))
+                                    <img class="img-fluid"
+                                         src="{{ asset('storage/tmp/' . session('editUserData')['profileImage']) }}"
+                                         alt="image">
+
+                                    @elseif ($user->profile)
+                                        <img class="img-fluid"
+                                             src="{{ asset('storage/' . $user->id . '/' . $user->profile) }}"
+                                             alt="profile">
+                                    @else
+                                        <img class="img-fluid "
+                                             src="{{ asset('storage/man.png') }}"
+                                             alt="Default profile image">
+                                    @endif
                 </div>
 
                 </div>

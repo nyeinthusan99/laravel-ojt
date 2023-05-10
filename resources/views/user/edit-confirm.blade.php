@@ -84,10 +84,7 @@
                 <label for="profile" class="col-md-4 col-form-label text-md-right required">Profile</label>
 
                 <div class="col-md-6">
-                  {{-- <input id="profile"  type="file" class="form-control" name="profile" value="{{ old('profile') }}">
-                  @error('profile')
-                      <span class="text-danger" id="err">{{ $message }}</span>
-                  @enderror --}}
+
                   <div id="previewImage">
                     @if (isset(session('editUserData')['profileImage']))
                         <img class="img-fluid"
@@ -96,6 +93,7 @@
                     @else
                     <img src="{{ asset('storage/' . $user->id . '/' . $user->profile) }}" alt="profile" class="img-fluid">
                     @endif
+
                 </div>
                 </div>
               </div>

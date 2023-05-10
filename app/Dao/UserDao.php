@@ -92,6 +92,7 @@ class UserDao implements UserDaoInterface
     }
 
     public function updateUser($request) {
+       // dd($request);
         $user = User::find(Auth::user()->id);
 
         $user->name = $request->name;
@@ -108,11 +109,14 @@ class UserDao implements UserDaoInterface
         if (!File::isDirectory(storage_path('app/public/'.$user->id))) {
             \File::makeDirectory(storage_path('app/public/'.$user->id));
         }
-        \File::move(
-            storage_path('app/public/tmp') .DIRECTORY_SEPARATOR. $user->profile,
-            storage_path('app/public/'.$user->id) .DIRECTORY_SEPARATOR .  $user->profile,
-        );
 
+        $tmpFilePath = storage_path('app/public/tmp/' . $user->profile);
+        $userFilePath = storage_path('app/public/'.$user->id) .DIRECTORY_SEPARATOR .  $user->profile;
+
+        if (File::exists($tmpFilePath)) {
+            \File::move($tmpFilePath, $userFilePath);
+        }
+        
         return $user;
 
     }
