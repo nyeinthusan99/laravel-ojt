@@ -33,11 +33,24 @@
                 <label for="type" class="col-md-4 col-form-label text-md-right required">Type<span class="text-danger ms-2">*</span></label>
 
                 <div class="col-md-6">
-                  <select name="type" id="type" class="form-control" value="{{ old('type') }}">
-                    <option value="" selected disabled>--- Select one ---</option>
-                    <option value="0" {{ $user->type == 0 ? 'selected' : '' }}>Admin</option>
-                    <option value="1" {{ $user->type == 1 ? 'selected' : '' }}>User</option>
-                  </select>
+
+                    @if (Auth::user()->type == '0')
+                    <select name="type" id="type" class="form-control" value="{{ old('type') }}">
+                        <option value="" selected disabled>--- Select one ---</option>
+                        <option value="0" {{ $user->type == 0 ? 'selected' : '' }}>Admin</option>
+                        <option value="1" {{ $user->type == 1 ? 'selected' : '' }}>User</option>
+                    </select>
+                    @else
+                    <select name="type" id="type" class="form-control" readonly="readonly" value="{{ old('type') }}">
+                        @if ($user->type == 0)
+                            <option value="0">Admin</option>
+                        @else
+                            <option value="1">User</option>
+                        @endif
+                    </select>
+                    @endif
+
+
                   @error('type')
                       <span class="text-danger" id="err">{{ $message }}</span>
                   @enderror
@@ -80,7 +93,7 @@
 
                 <div class="col-md-6">
                     {{-- <input type="hidden" value="{{$user->profile}}"  name="oldProfile"> --}}
-                  <input id="profile"  type="file" class="form-control" name="profile">
+                  <input id="profile"  type="file" class="form-control mb-3" name="profile">
                   @error('profile')
                       <span class="text-danger" id="err">{{ $message }}</span>
                   @enderror
@@ -102,7 +115,11 @@
                 </div>
 
                 </div>
-              </div>
+            </div>
+
+            <div class="form-group row my-3">
+                <a href="{{ route('changePasswordView') }}">Change Password</a>
+            </div>
 
             <div class="form-group row mb-0">
               <div class="col-md-6 offset-md-4">

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\UserEditRequest;
 use App\Http\Requests\UserCreateRequest;
 use App\Contracts\Services\UserServiceInterface;
+use App\Http\Requests\ChangePasswordRequest;
 use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
@@ -128,6 +129,18 @@ class UserController extends Controller
             $request->merge(session('editUserData'));
 
             $this->userService->updateUser($request);
-            return redirect()->route('userlist');
+            return redirect()->route('user.profile');
+        }
+
+        public function changePasswordView()
+        {
+            return view('user.change-password');
+        }
+
+        public function changePassword(ChangePasswordRequest $request)
+        {
+            $validated = $request->validated();
+            $this->userService->changePassword($validated);
+            return redirect()->route('login');
         }
  }

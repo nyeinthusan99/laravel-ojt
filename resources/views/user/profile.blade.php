@@ -11,7 +11,7 @@
                     <div class="card-body m-auto w-75">
                         <div class=" mb-3 text-center">
                             @if($user->profile)
-                            <img src="{{ asset('storage/' . $user->id . '/' . $user->profile) }}" alt="profile" class="img-fluid rounded-circle w-50 h-50">
+                            <img src="{{ asset('storage/' . $user->id . '/' . $user->profile) }}" alt="profile" class="img-fluid ">
                             @else
                             <img src="{{ asset('storage/man.png') }}" alt="Default profile image" class="img-fluid w-50 h-50">
                             @endif

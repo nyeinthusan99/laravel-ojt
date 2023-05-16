@@ -8,4 +8,5 @@ interface UserServiceInterface
      public function delete($userId,$deletedUserId);
     public function getUserById($userId);
      public function updateUser($request);
+     public function changePassword($validated);
 }

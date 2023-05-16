@@ -30,7 +30,7 @@ class UserCreateRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique("users","email")->whereNull('deleted_at')],
-            'password' => ['required', 'min:8', 'same:confirmPassword',],
+            'password' => ['required', 'min:8', 'same:confirmPassword'],
             'confirmPassword' => ['required'],
             'profile' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             'type' => ['required'],

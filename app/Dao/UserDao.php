@@ -5,6 +5,7 @@ use File;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Contracts\Dao\UserDaoInterface;
 
 class UserDao implements UserDaoInterface
@@ -116,8 +117,32 @@ class UserDao implements UserDaoInterface
         if (File::exists($tmpFilePath)) {
             \File::move($tmpFilePath, $userFilePath);
         }
-        
+
         return $user;
+
+    }
+
+    public function changePassword($validated)
+     {   //dd($request->all());
+    //     $user = User::find($request->user()->id);
+    //     //dd($request->current_password);
+    //     #Match The Old Password
+    //     if(!Hash::check($request['current_password'], auth()->user()->password)){
+    //         return back()->with("errorMsg", "Old Password Doesn't match!");
+    //     }
+
+
+    //     #Update the new Password
+    //     $user = User::find(auth()->user()->id)->update([
+    //         'password' => Hash::make($request['new_password']),
+    //         'updated_user_id' => Auth::user()->id
+    //     ]);
+    $user = User::find(Auth::user()->id)->update([
+        'password' => Hash::make($validated['new_password']),
+        'updated_user_id' => Auth::user()->id
+      ]);
+    return $user;
+
 
     }
 }
