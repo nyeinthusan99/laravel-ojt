@@ -34,9 +34,6 @@
 
                 <div class="col-md-6">
                   <select name="type" id="type" class="form-control" readonly="readonly" value="{{ old('type') }}">
-                    {{-- <option value="" selected disabled>--- Select one ---</option>
-                    <option value="0" {{ $user->type == 0 ? 'selected' : '' }}>Admin</option>
-                    <option value="1" {{ $user->type == 1 ? 'selected' : '' }}>User</option> --}}
                     @if (session('editUserData')['type'] == 0)
                     <option value="0" >Admin</option>
                     @else
@@ -93,7 +90,6 @@
                     @else
                     <img src="{{ asset('storage/' . $user->id . '/' . $user->profile) }}" alt="profile" class="img-fluid">
                     @endif
-
                 </div>
                 </div>
               </div>

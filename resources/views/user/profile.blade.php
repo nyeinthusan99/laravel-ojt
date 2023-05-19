@@ -11,7 +11,7 @@
                     <div class="card-body m-auto w-75">
                         <div class=" mb-3 text-center">
                             @if($user->profile)
-                            <img src="{{ asset('storage/' . $user->id . '/' . $user->profile) }}" alt="profile" class="img-fluid ">
+                            <img src="{{ asset('storage/' . $user->id . '/' . $user->profile) }}" alt="profile" class="img-fluid rounded w-50 h-50">
                             @else
                             <img src="{{ asset('storage/man.png') }}" alt="Default profile image" class="img-fluid w-50 h-50">
                             @endif
@@ -46,7 +46,7 @@
                         </div>
                         <div class=" d-flex justify-content-end me-5">
                             <a type="button" class="btn btn-primary" href="/user/profile/update">
-                                Edit
+                                <i class="fa-sharp fa-solid fa-pen-to-square"></i> Edit
                             </a>
                           </div>
                     </div>

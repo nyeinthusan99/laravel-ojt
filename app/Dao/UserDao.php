@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Dao;
-use File;
+use Illuminate\Support\Facades\File;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -32,16 +32,15 @@ class UserDao implements UserDaoInterface
         }
 
         if ($created_from) {
-            $users->where('user.created_at', '>=', $created_from);
+            $users->whereDate('user.created_at', '>=', $created_from);
         }
 
         if ($created_to) {
-            $users->where('user.created_at', '<=', $created_to);
+            $users->whereDate('user.created_at', '<=', $created_to);
         }
 
         $users = $users->orderByDesc('user.id')
-                    ->paginate(10);
-
+                    ->paginate(2)->withQueryString();
 
         return $users;
     }
@@ -82,9 +81,9 @@ class UserDao implements UserDaoInterface
         $user->save();
 
         if (!File::isDirectory(storage_path('app/public/'.$user->id))) {
-            \File::makeDirectory(storage_path('app/public/'.$user->id));
+            File::makeDirectory(storage_path('app/public/'.$user->id));
         }
-        \File::move(
+        File::move(
             storage_path('app/public/tmp') .DIRECTORY_SEPARATOR. $user->profile,
             storage_path('app/public/'.$user->id) .DIRECTORY_SEPARATOR .  $user->profile,
         );
@@ -108,14 +107,14 @@ class UserDao implements UserDaoInterface
         $user->save();
 
         if (!File::isDirectory(storage_path('app/public/'.$user->id))) {
-            \File::makeDirectory(storage_path('app/public/'.$user->id));
+            File::makeDirectory(storage_path('app/public/'.$user->id));
         }
 
         $tmpFilePath = storage_path('app/public/tmp/' . $user->profile);
         $userFilePath = storage_path('app/public/'.$user->id) .DIRECTORY_SEPARATOR .  $user->profile;
 
         if (File::exists($tmpFilePath)) {
-            \File::move($tmpFilePath, $userFilePath);
+            File::move($tmpFilePath, $userFilePath);
         }
 
         return $user;
@@ -123,26 +122,13 @@ class UserDao implements UserDaoInterface
     }
 
     public function changePassword($validated)
-     {   //dd($request->all());
-    //     $user = User::find($request->user()->id);
-    //     //dd($request->current_password);
-    //     #Match The Old Password
-    //     if(!Hash::check($request['current_password'], auth()->user()->password)){
-    //         return back()->with("errorMsg", "Old Password Doesn't match!");
-    //     }
+     {
 
-
-    //     #Update the new Password
-    //     $user = User::find(auth()->user()->id)->update([
-    //         'password' => Hash::make($request['new_password']),
-    //         'updated_user_id' => Auth::user()->id
-    //     ]);
-    $user = User::find(Auth::user()->id)->update([
-        'password' => Hash::make($validated['new_password']),
-        'updated_user_id' => Auth::user()->id
-      ]);
-    return $user;
-
+        $user = User::find(Auth::user()->id)->update([
+            'password' => Hash::make($validated['new_password']),
+            'updated_user_id' => Auth::user()->id
+        ]);
+        return $user;
 
     }
 }

@@ -99,18 +99,18 @@
                   @enderror
                   <div id="previewImage">
                     @if (isset(session('editUserData')['profileImage']))
-                                    <img class="img-fluid"
+                                    <img class="img-fluid w-50 h-50"
                                          src="{{ asset('storage/tmp/' . session('editUserData')['profileImage']) }}"
                                          alt="image">
 
-                                    @elseif ($user->profile)
-                                        <img class="img-fluid"
+                                    @else 
+                                        <img class="img-fluid w-50 h-50"
                                              src="{{ asset('storage/' . $user->id . '/' . $user->profile) }}"
                                              alt="profile">
-                                    @else
-                                        <img class="img-fluid "
+
+                                        {{-- <img class="img-fluid w-50 h-50"
                                              src="{{ asset('storage/man.png') }}"
-                                             alt="Default profile image">
+                                             alt="Default profile image"> --}}
                                     @endif
                 </div>
 
@@ -126,9 +126,17 @@
                 <button type="submit" class="btn btn-primary me-3">
                   Confirm
                 </button>
-                <button type="reset" class="btn btn-secondary" id=""
-                    >
-                  Clear
+                <button type="reset" class="btn btn-secondary"
+                onclick="document.getElementById('name').value = null;
+                    document.getElementById('email').value = null;
+                    document.getElementById('type').value = null;
+                    document.getElementById('phone').value = null;
+                    document.getElementById('dob').value = null;
+                    document.getElementById('address').value = null;
+                    document.getElementById('profile').value = null;
+                    document.querySelector('#previewImage').innerHTML = ''
+                    return false;">
+                    Clear
                 </button>
               </div>
             </div>

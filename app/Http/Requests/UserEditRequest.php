@@ -31,7 +31,7 @@ class UserEditRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique("users","email")->ignore(Auth::user()->id)->whereNull('deleted_at')],
-            'profile' => [ 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'profile' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             'type' => ['required'],
             'phone' => ['max:20'],
             'address' => ['max:255'],

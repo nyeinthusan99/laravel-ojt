@@ -106,7 +106,7 @@ class UserController extends Controller
             }else {
                 $request->merge(['profileImage' =>  $oldProfile ]);
             }
-            session(['editUserData' => $request->except('profile')]);
+            session(['editUserData'  => $request->except('profile') ]);
 
             return to_route('userProfileUpdate.confirm');
         }
@@ -118,7 +118,7 @@ class UserController extends Controller
 
             session()->flash('persists', true);
             if (!session('editUserData')) {
-                return redirect()->route('user.edit');
+                return redirect()->route('userProfile.edit');
             }
 
             return view('user.edit-confirm',['user' => $user]);

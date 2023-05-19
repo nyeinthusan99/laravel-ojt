@@ -9,17 +9,17 @@
                     <input type="text" value="{{ request('searchItem') }}" placeholder="Search title, description or created user" class="form-control" name="searchItem" id="searchitem">
                 </div>
                 <div class="col-md-4">
-                    <button type="submit" class="btn btn-primary form-control">Search</button>
+                    <button type="submit" class="btn btn-primary form-control"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
                 </div>
             </form>
             <div class="col-md-2">
-                <a href="{{ route('post.create')}}" class="btn btn-primary form-control">Add</a>
+                <a href="{{ route('post.create')}}" class="btn btn-primary form-control"><i class="fa-solid fa-circle-plus"></i> Create Post</a>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('post.upload')}}" class="btn btn-primary form-control">Upload</a></div>
+                <a href="{{ route('post.upload')}}" class="btn btn-primary form-control"><i class="fa-sharp fa-solid fa-upload"></i> Upload</a></div>
             <form action="{{ route('post.export') }}" method="post" class="col-2">
                 @csrf
-                <button class="btn btn-primary form-control">Download</button>
+                <button class="btn btn-primary form-control" {{ $posts->isEmpty() ? 'disabled' : '' }}><i class="fa-solid fa-download"></i> Download</button>
             </form>
         </div>
         <table class="table table-bordered m-auto w-75 mt-5" id="mytable" >
@@ -50,10 +50,10 @@
                         <td>{{ $post->created_user}}</td>
                         <td>{{ date('Y/m/d', strtotime($post->created_at)) }}</td>
                         <td>
-                            <a href="/post/update/{{ $post->id }}" class="btn btn-warning btn-sm form-control">Edit</a>
+                            <a href="/post/update/{{ $post->id }}" class="btn btn-warning btn-sm form-control"><i class="fa-sharp fa-solid fa-pen-to-square"></i> Edit</a>
                         </td>
                         <td>
-                            <button type="button" class="btn btn-danger btn-sm form-control" data-bs-toggle="modal" data-bs-target="#Delete{{$post->id}}">Delete</button>
+                            <button type="button" class="btn btn-danger btn-sm form-control" data-bs-toggle="modal" data-bs-target="#Delete{{$post->id}}"><i class="fa-solid fa-trash"></i> Delete</button>
                         </td>
                     </tr>
                 @endforeach

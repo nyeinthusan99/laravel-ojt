@@ -6,7 +6,7 @@
     <div class="row justify-content-center mt-5">
         <div class="col-md-10 fw-bold ">Upload CSV FIle</div>
         <div class="col-md-6 mt-3">
-            <div class="card-header bg-white">Import File From:</div>
+            <div class="card-header bg-white ">Import File From:</div>
                 <div class="card">
                     <div class="card-body">
                         <form method="POST" action="{{ route('postUpload.store') }}" enctype="multipart/form-data">

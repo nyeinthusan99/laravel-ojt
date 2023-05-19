@@ -23,7 +23,7 @@ class AuthController extends Controller
         }
 
         return back()->withErrors([
-            'credentials' => 'The provided credentials do not match our records.',
+            'credentials' => 'Email or password is incorrect',
         ])->withInput(['email']);
     }
 

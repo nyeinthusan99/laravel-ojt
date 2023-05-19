@@ -2,37 +2,37 @@
 
 @section('content')
     <div class="container mt-5">
-        <div class="row d-flex">
-            <form action="{{ route('userlist') }}" method="GET" class="col-md-9 d-flex">
+        <div class="row mb-5">
+            <div class="col-md-2">
+                <a href="{{ route('user.create')}}" class="btn btn-primary form-control"><i class="fa-solid fa-circle-plus"></i> Create User</a>
+            </div>
+        </div>
+        <div class="row">
+            <form action="{{ route('userlist') }}" method="GET" class="col-md-12 d-flex">
                 @csrf
-                <div class="col-md-2 me-2">
+                <div class="col-md-2 me-2 ">
                     <input type="text" value="{{ request()->input('name') }}" placeholder="Name" class="form-control" name="name" id="name">
                 </div>
                 <div class="col-md-2 me-2">
                     <input type="text" value="{{ request()->input('email') }}" placeholder="Email" class="form-control" name="email" id="email">
                 </div>
-                <div class="col-md-2 me-3">
-                    <input type="date" value="{{ request()->input('created_from') }}" placeholder="Created From" class="form-control" name="created_from" id="created_from">
+                <div class="col-md-3 me-2 d-flex">
+                    <label class="me-2 m-auto">From: </label>
+                    <input   type="date" value="{{ request()->input('created_from') }}" placeholder="Created From" class="form-control" name="created_from" id="created_from">
                 </div>
-                <div class="col-md-2 me-3">
+                <div class="col-md-3 me-2 d-flex">
+                    <label class="me-2 m-auto">To: </label>
                     <input type="date" value="{{ request()->input('created_to') }}" placeholder="Created To" class="form-control" name="created_to" id="created_to">
                 </div>
                 <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary form-control">Search</button>
+                    <button type="submit" class="btn btn-primary form-control"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
                 </div>
             </form>
-            <div class="col-md-2">
+            {{-- <div class="col-md-1">
                 <a href="{{ route('user.create')}}" class="btn btn-primary form-control">Add</a>
-            </div>
-            {{-- <div class="col-md-2">
-                <a href="{{ route('post.upload')}}" class="btn btn-primary form-control">Upload</a>
             </div> --}}
-            {{-- <form action="{{ route('post.export') }}" method="post" class="col-2">
-                @csrf
-                <button class="btn btn-primary form-control">Download</button>
-            </form> --}}
         </div>
-        <table class="table table-bordered m-auto w-75 mt-5" id="mytable" >
+        <table class="table table-bordered m-auto  mt-5" id="mytable" >
             <thead>
                 <tr class="text-center">
                     <th scope="col">Name</th>
@@ -49,7 +49,7 @@
             <tbody>
                 @if (count($users) == 0)
                     <tr>
-                        <td colspan="6" class="text-center">There is no users</td>
+                        <td colspan="9" class="text-center">There is no users</td>
                     </tr>
                 @endif
 
@@ -63,7 +63,12 @@
                         <td>{{ $user->email }}</td>
                         <td>{{ $user->created_user }}</td>
                         <td>{{ $user->phone ?? '-' }}</td>
-                        <td>{{ $user->dob ?? '-' }}</td>
+                        @if ($user->dob)
+                            <td>{{ date('Y/m/d', strtotime($user->dob)) }}</td>
+                            @else
+                            <td>{{ "-" }}</td>
+                        @endif
+
                         <td>{{ $user->address ?? '-' }}</td>
                         <td>{{ date('Y/m/d', strtotime($user->created_at)) }}</td>
                         <td>{{ date('Y/m/d', strtotime($user->updated_at)) }}</td>
@@ -72,7 +77,7 @@
                         </td> --}}
                         <td>
                             @if(auth()->user()->id != $user->id)
-                            <button type="button" class="btn btn-danger btn-sm form-control" data-bs-toggle="modal" data-bs-target="#Delete{{$user->id}}">Delete</button>
+                            <button type="button" class="btn btn-danger btn-sm form-control" data-bs-toggle="modal" data-bs-target="#Delete{{$user->id}}"><i class="fa-solid fa-trash"></i> Delete</button>
                             @endif
                         </td>
                     </tr>
@@ -97,7 +102,7 @@
                     <div class="col-md-12">
                         <div class=" mb-3 text-center">
                             @if($user->profile)
-                            <img src="{{ asset('storage/' . $user->id . '/' . $user->profile) }}" alt="profile" class="img-fluid rounded-circle w-50 h-50">
+                            <img src="{{ asset('storage/' . $user->id . '/' . $user->profile) }}" alt="profile" class="img-fluid rounded w-50 h-50">
                             @else
                             <img src="{{ asset('storage/man.png') }}" alt="Default profile image" class="img-fluid w-50 h-50">
                             @endif
