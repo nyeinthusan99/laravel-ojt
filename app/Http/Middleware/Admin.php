@@ -15,9 +15,9 @@ class Admin
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
     public function handle(Request $request, Closure $next)
-    {
-        if ($request->user() && $request->user()->type != '0') {
-            return redirect()->to('/user/login');
+    {//dd($request->user()->type);
+        if ($request->user()?->type !== 0) {
+            return to_route('login');
         }
 
         return $next($request);

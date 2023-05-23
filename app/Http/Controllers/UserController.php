@@ -8,7 +8,6 @@ use App\Http\Requests\UserEditRequest;
 use App\Http\Requests\UserCreateRequest;
 use App\Contracts\Services\UserServiceInterface;
 use App\Http\Requests\ChangePasswordRequest;
-use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -21,12 +20,12 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $users = $this->userService->index($request);
-        return view('user.list',['users' => $users]);
+        return view('user.list', ['users' => $users]);
     }
 
     public function createView()
     {
-        if(!session('persists')) {
+        if (!session('persists')) {
             session()->forget('createUserData');
         }
         return view('user.create');
@@ -36,13 +35,12 @@ class UserController extends Controller
     {
         $request->validated();
 
-        if($request->hasFile('profile')) {
-            $fileName = rand().'_'.now()->format('Y-m-d');
-            $request->file('profile')->storeAs('tmp', $fileName.'.'.$request->file('profile')->getClientOriginalExtension());
-            $request->merge(['profileImage' =>  $fileName.'.'.$request->file('profile')->getClientOriginalExtension()]);
+        if ($request->hasFile('profile')) {
+            $fileName = rand() . '_' . now()->format('Y-m-d');
+            $request->file('profile')->storeAs('tmp', $fileName . '.' . $request->file('profile')->getClientOriginalExtension());
+            $request->merge(['profileImage' =>  $fileName . '.' . $request->file('profile')->getClientOriginalExtension()]);
         }
         session(['createUserData' => $request->except('profile')]);
-        //dd(session('createUserData'));
         return to_route('userCreate.confirm');
     }
 
@@ -54,93 +52,85 @@ class UserController extends Controller
         }
 
         return view('user.create-confirm');
-
     }
 
-     public function store(Request $request)
-     {
-        //dd(session('createUserData'));
-        // dd(storage_path('tmp') . session('createUserData')['profileImage']);
+    public function store(Request $request)
+    {
+        $request->merge(session('createUserData'));
+        $this->userService->store($request);
+        return redirect()->route('userlist');
+    }
 
-         $request->merge(session('createUserData'));
-         $this->userService->store($request);
-         return redirect()->route('userlist');
-     }
+    public function delete($userId)
+    {
+        $deletedUserId = Auth::user()->id;
+        $this->userService->delete($userId, $deletedUserId);
+        return redirect()->route('userlist');
+    }
 
-        public function delete($userId)
-        {
-            $deletedUserId = Auth::user()->id;
-            $this->userService->delete($userId,$deletedUserId);
-            return redirect()->route('userlist');
+    public function showProfile()
+    {
+        $userId = Auth::user()->id;
+        $user = $this->userService->getUserById($userId);
+        return view('user.profile', ['user' => $user]);
+    }
+
+
+    public function editProfileView()
+    {
+        if (!session('persists')) {
+            session()->forget('editUserData');
         }
 
-        public function showProfile()
-        {
-            $userId = Auth::user()->id;
-            $user = $this->userService->getUserById($userId);
-            return view('user.profile',['user' => $user]);
+        $userId = Auth::user()->id;
+        $user = $this->userService->getUserById($userId);
+        return view('user.edit', ['user' => $user]);
+    }
+
+    public function editProfileSubmit(UserEditRequest $request)
+    {
+        $request->validated();
+
+        if ($request->hasFile('profile')) {
+            $fileName = rand() . '_' . now()->format('Y-m-d');
+            $request->file('profile')->storeAs('tmp', $fileName . '.' . $request->file('profile')->getClientOriginalExtension());
+            $request->merge(['profileImage' =>  $fileName . '.' . $request->file('profile')->getClientOriginalExtension()]);
+        }
+        session(['editUserData'  => $request->except('profile')]);
+
+        return to_route('userProfileUpdate.confirm');
+    }
+
+    public function editProfileConfirmView()
+    {
+        $userId = Auth::user()->id;
+        $user = $this->userService->getUserById($userId);
+
+        session()->flash('persists', true);
+        if (!session('editUserData')) {
+            return redirect()->route('userProfile.edit');
         }
 
+        return view('user.edit-confirm', ['user' => $user]);
+    }
 
-        public function editProfileView()
-        {
-            if(!session('persists')) {
-                session()->forget('editUserData');
-            }
+    public function editProfileStore(Request $request)
+    {
+        $request->merge(session('editUserData'));
 
-            $userId = Auth::user()->id;
-            $user = $this->userService->getUserById($userId);
-            return view('user.edit',['user' => $user]);
-        }
+        $this->userService->updateUser($request);
+        return redirect()->route('user.profile');
+    }
 
-        public function editProfileSubmit(UserEditRequest $request)
-        {
-            $request->validated();
+    public function changePasswordView()
+    {
+        return view('user.change-password');
+    }
 
-            $oldProfile = Auth::user()->profile;
-            //dd($request);
-            if($request->hasFile('profile')) {
-                $fileName = rand().'_'.now()->format('Y-m-d');
-                $request->file('profile')->storeAs('tmp', $fileName.'.'.$request->file('profile')->getClientOriginalExtension());
-                $request->merge(['profileImage' =>  $fileName.'.'.$request->file('profile')->getClientOriginalExtension()]);
-            }else {
-                $request->merge(['profileImage' =>  $oldProfile ]);
-            }
-            session(['editUserData'  => $request->except('profile') ]);
-
-            return to_route('userProfileUpdate.confirm');
-        }
-
-        public function editProfileConfirmView()
-        {
-            $userId = Auth::user()->id;
-            $user = $this->userService->getUserById($userId);
-
-            session()->flash('persists', true);
-            if (!session('editUserData')) {
-                return redirect()->route('userProfile.edit');
-            }
-
-            return view('user.edit-confirm',['user' => $user]);
-        }
-
-        public function editProfileStore(Request $request)
-        {
-            $request->merge(session('editUserData'));
-
-            $this->userService->updateUser($request);
-            return redirect()->route('user.profile');
-        }
-
-        public function changePasswordView()
-        {
-            return view('user.change-password');
-        }
-
-        public function changePassword(ChangePasswordRequest $request)
-        {
-            $validated = $request->validated();
-            $this->userService->changePassword($validated);
-            return redirect()->route('login');
-        }
- }
+    public function changePassword(ChangePasswordRequest $request)
+    {
+        $validated = $request->validated();
+        $this->userService->changePassword($validated);
+        return redirect()->route('login');
+    }
+}

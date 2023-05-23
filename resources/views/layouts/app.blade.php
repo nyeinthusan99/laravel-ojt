@@ -22,8 +22,8 @@
     <div>
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="">
-                   Laravel
+                <a class="navbar-brand" href="{{ route('postlist') }}">
+                    Laravel
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -35,47 +35,40 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto">
                         @auth
-                        @if (auth()->user()->type == 0)
-                        <li class="nav-item">
-                            <a href="{{ route('userlist') }}" class="nav-link">
-                                Users
-                            </a>
-                        </li>
-                        @endif
-                        {{-- <li class="nav-item">
-                            <a href="" class="nav-link">
-                                User
-                            </a>
-                        </li> --}}
-                        <li class="nav-item">
-                            <a href="{{ route('postlist')}}" class="nav-link">
-                                Posts
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('user.profile') }}" class="nav-link">
-                                {{ auth()->user()->name }}
-                             </a>
-                        </li>
-                        <li class="nav-item">
-                            <form action="/user/logout" method="POST">
-                                @csrf
+                            @if (auth()->user()->type == 0)
+                                <li class="nav-item">
+                                    <a href="{{ route('userlist') }}" class="nav-link">
+                                        Users
+                                    </a>
+                                </li>
+                            @endif
+                            <li class="nav-item">
+                                <a href="{{ route('postlist') }}" class="nav-link">
+                                    Posts
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('user.profile') }}" class="nav-link">
+                                    {{ auth()->user()->name }}
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <form action="/user/logout" method="POST">
+                                    @csrf
                                     <button href="" class="nav-link btn btn-link" type="submit">
                                         Logout
                                     </button>
-                            </form>
-                        </li>
+                                </form>
+                            </li>
                         @endauth
                     </ul>
+                </div>
             </div>
+        </nav>
+
+        @yield('content')
+
     </div>
-    </nav>
-
-
-
-    @yield('content')
-    </div>
-
 
 </body>
 

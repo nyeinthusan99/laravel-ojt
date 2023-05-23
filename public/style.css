@@ -1,1 +1,11 @@
+.detail-modal{
+    max-width: 600px !important;
+}
 
+.detail-body{
+    width: 85%;
+}
+
+.post-ttl {
+    word-break: break-all;
+}

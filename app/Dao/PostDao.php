@@ -1,12 +1,12 @@
 <?php
 
 namespace App\Dao;
+
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Contracts\Dao\PostDaoInterface;
-
 
 class PostDao implements PostDaoInterface
 {
@@ -15,15 +15,15 @@ class PostDao implements PostDaoInterface
         $search = $request->input('searchItem');
         $user = Auth::user();
 
-        $posts= DB::table('posts')
-            ->select('posts.*','created_user.name as created_user','updated_user.name as updated_user')
-            ->join('users as created_user','created_user.id','=','posts.created_user_id')
-            ->join('users as updated_user','updated_user.id','=','posts.updated_user_id')
+        $posts = DB::table('posts')
+            ->select('posts.*', 'created_user.name as created_user', 'updated_user.name as updated_user')
+            ->join('users as created_user', 'created_user.id', '=', 'posts.created_user_id')
+            ->join('users as updated_user', 'updated_user.id', '=', 'posts.updated_user_id')
             ->whereNull('posts.deleted_at')
             ->where(function ($query) use ($search) {
-                $query->where('posts.title', 'like', '%'.$search.'%')
-                      ->orWhere('posts.description', 'like', '%'.$search.'%')
-                      ->orWhere('created_user.name', 'like', '%'.$search.'%');
+                $query->where('posts.title', 'like', '%' . $search . '%')
+                    ->orWhere('posts.description', 'like', '%' . $search . '%')
+                    ->orWhere('created_user.name', 'like', '%' . $search . '%');
             })
             ->when($user->type != '0', function ($query) use ($user) {
                 $query->where('posts.created_user_id', '=', $user->id);
@@ -32,13 +32,7 @@ class PostDao implements PostDaoInterface
             ->paginate(2)
             ->withQueryString();
 
-            return $posts;
-        // $posts = DB::table('posts')
-        //     ->select('posts.*','users.name as created_user')
-        //     ->join('users','users.id','=','posts.created_user_id')
-        //     ->whereNull('posts.deleted_at')
-        //     ->get();
-        //     return $posts;
+        return $posts;
     }
 
 
@@ -53,11 +47,10 @@ class PostDao implements PostDaoInterface
         return $post;
     }
 
-    public function delete($postId,$deletedUserId)
+    public function delete($postId, $deletedUserId)
     {
         $post = Post::where('id', $postId)->first();
-        //dd($post);
-        if($post && !$post->deleted_user_id){
+        if ($post && !$post->deleted_user_id) {
             $post->deleted_user_id = $deletedUserId;
             $post->update();
             $post->delete();
@@ -68,7 +61,7 @@ class PostDao implements PostDaoInterface
 
     public function getPostById($postId)
     {
-        $post = Post::where('id',$postId)->first();
+        $post = Post::where('id', $postId)->first();
         return $post;
     }
 
@@ -82,5 +75,4 @@ class PostDao implements PostDaoInterface
         $post->save();
         return $post;
     }
-
 }

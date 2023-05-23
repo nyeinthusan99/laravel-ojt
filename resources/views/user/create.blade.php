@@ -1,4 +1,5 @@
 @extends('layouts.app')
+
 @section('content')
     <div class="container">
         <div class="row justify-content-center">
@@ -35,7 +36,7 @@
                                 class="text-danger ms-2">*</span></label>
 
                         <div class="col-md-6">
-                            <input id="password"  type="password" class="form-control" name="password"
+                            <input id="password" type="password" class="form-control" name="password"
                                 value="{{ old('password') }}">
                             @error('password')
                                 <span class="text-danger" id="err">{{ $message }}</span>
@@ -47,8 +48,8 @@
                             Password<span class="text-danger ms-2">*</span></label>
 
                         <div class="col-md-6">
-                            <input id="confirmPassword"  type="password" class="form-control"
-                                name="confirmPassword" value="{{ old('confirmPassword') }}">
+                            <input id="confirmPassword" type="password" class="form-control" name="confirmPassword"
+                                value="{{ old('confirmPassword') }}">
                             @error('confirmPassword')
                                 <span class="text-danger" id="err">{{ $message }}</span>
                             @enderror
@@ -61,8 +62,8 @@
                         <div class="col-md-6">
                             <select name="type" id="type" class="form-control" value="{{ old('type') }}">
                                 <option value="" selected disabled>--- Select one ---</option>
-                                <option value="0" {{ old('type') == "0" ? 'selected' : '' }}>Admin</option>
-                                <option value="1" {{ old('type') == "1" ? 'selected' : '' }}>User</option>
+                                <option value="0" {{ old('type') == '0' ? 'selected' : '' }}>Admin</option>
+                                <option value="1" {{ old('type') == '1' ? 'selected' : '' }}>User</option>
                             </select>
                             @error('type')
                                 <span class="text-danger" id="err">{{ $message }}</span>
@@ -129,7 +130,8 @@
                                 Confirm
                             </button>
                             <button type="reset" class="btn btn-secondary"
-                            onclick="document.getElementById('name').value = null;
+                                onclick="document.getElementById('myForm').reset();
+                                document.getElementById('name').value = null;
                                 document.getElementById('email').value = null;
                                 document.getElementById('password').value = null;
                                 document.getElementById('confirmPassword').value = null;
@@ -159,11 +161,10 @@
                 const image = new Image();
                 image.src = e.target.result;
                 image.classList.add('img-fluid')
-                let div=  document.createElement('div')
+                let div = document.createElement('div')
                 div.append(image)
                 document.querySelector('#previewImage').innerHTML = div.innerHTML;
             }
-
         })
     </script>
 @endsection

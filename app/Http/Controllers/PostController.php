@@ -25,7 +25,7 @@ class PostController extends Controller
     public function index(Request $request)
     {
         $posts = $this->postService->index($request);
-        return view('post.list',['posts' => $posts]);
+        return view('post.list', ['posts' => $posts]);
     }
 
     public function createView()
@@ -36,24 +36,18 @@ class PostController extends Controller
     public function createSubmit(PostCreateRquest $request)
     {
         $request->validated();
-        // return to_route('postCreate.confirm')->withInput();
 
-        session(['createPostData' => array_merge($request->safe()->only(['title','description']))]);
+        session(['createPostData' => array_merge($request->safe()->only(['title', 'description']))]);
         return to_route('postCreate.confirm');
     }
 
     public function confirmView()
     {
-        // if (old()) {
-        //     return view('post.create-confirm');
-        // }
-        // return redirect()->route('post.create');
         if (!session('createPostData')) {
             return redirect()->route('post.create');
         }
 
         return view('post.create-confirm');
-
     }
 
     public function store(Request $request)
@@ -65,21 +59,21 @@ class PostController extends Controller
     public function delete($postId)
     {
         $deletedUserId = Auth::user()->id;
-        $this->postService->delete($postId,$deletedUserId);
+        $this->postService->delete($postId, $deletedUserId);
         return redirect()->route('postlist');
     }
 
     public function editView($postId)
     {
         $post = $this->postService->getPostbyId($postId);
-        return view('post.edit',['post' => $post]);
+        return view('post.edit', ['post' => $post]);
     }
 
-    public function editSubmit(PostEditRequest $request,$postId)
+    public function editSubmit(PostEditRequest $request, $postId)
     {
         $request->validated();
         session(['editPostData' => $request->all()]);
-        return to_route('postUpdate.confirm',[$postId]);
+        return to_route('postUpdate.confirm', [$postId]);
     }
 
     public function editConfirmView($postId)
@@ -88,12 +82,12 @@ class PostController extends Controller
             return redirect()->route('post.edit');
         }
 
-        return view('post.edit-confirm',['postId' => $postId]);
+        return view('post.edit-confirm', ['postId' => $postId]);
     }
 
-    public function editStore(Request $request,$postId)
+    public function editStore(Request $request, $postId)
     {
-        $this->postService->updatePost($request,$postId);
+        $this->postService->updatePost($request, $postId);
         return redirect()->route('postlist');
     }
 
@@ -127,7 +121,6 @@ class PostController extends Controller
     public function export(Request $request)
     {
         $posts = $this->postService->index($request);
-        return Excel::download(new PostsExport($posts),'post.xlsx');
+        return Excel::download(new PostsExport($posts), 'post.xlsx');
     }
-
 }

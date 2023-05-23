@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Dao;
+
 use Illuminate\Support\Facades\File;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -40,16 +41,15 @@ class UserDao implements UserDaoInterface
         }
 
         $users = $users->orderByDesc('user.id')
-                    ->paginate(2)->withQueryString();
+            ->paginate(2)->withQueryString();
 
         return $users;
     }
 
-    public function delete($userId,$deletedUserId)
+    public function delete($userId, $deletedUserId)
     {
         $user = User::where('id', $userId)->first();
-        //dd($post);
-        if($user && !$user->deleted_user_id){
+        if ($user && !$user->deleted_user_id) {
             $user->deleted_user_id = $deletedUserId;
             $user->update();
             $user->delete();
@@ -60,18 +60,19 @@ class UserDao implements UserDaoInterface
 
     public function getUserById($userId)
     {
-        $user = User::where('id',$userId)->first();
+        $user = User::where('id', $userId)->first();
         return $user;
     }
 
-    public function store($request) {
+    public function store($request)
+    {
         $user = new User();
 
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = bcrypt($request->password);
         $user->profile = $request->profileImage;
-        $user->type = $request->type ;
+        $user->type = $request->type;
         $user->phone = $request->phone;
         $user->address = $request->address;
         $user->dob = $request->dob;
@@ -80,25 +81,27 @@ class UserDao implements UserDaoInterface
 
         $user->save();
 
-        if (!File::isDirectory(storage_path('app/public/'.$user->id))) {
-            File::makeDirectory(storage_path('app/public/'.$user->id));
+        if (!File::isDirectory(storage_path('app/public/' . $user->id))) {
+            File::makeDirectory(storage_path('app/public/' . $user->id));
         }
         File::move(
-            storage_path('app/public/tmp') .DIRECTORY_SEPARATOR. $user->profile,
-            storage_path('app/public/'.$user->id) .DIRECTORY_SEPARATOR .  $user->profile,
+            storage_path('app/public/tmp') . DIRECTORY_SEPARATOR . $user->profile,
+            storage_path('app/public/' . $user->id) . DIRECTORY_SEPARATOR .  $user->profile,
         );
 
         return $user;
     }
 
-    public function updateUser($request) {
-       // dd($request);
+    public function updateUser($request)
+    {
         $user = User::find(Auth::user()->id);
 
         $user->name = $request->name;
         $user->email = $request->email;
-        $user->profile = $request->profileImage;
-        $user->type = $request->type ;
+        if ($request->profileImage) {
+            $user->profile = $request->profileImage;
+        }
+        $user->type = $request->type;
         $user->phone = $request->phone;
         $user->address = $request->address;
         $user->dob = $request->dob;
@@ -106,29 +109,30 @@ class UserDao implements UserDaoInterface
 
         $user->save();
 
-        if (!File::isDirectory(storage_path('app/public/'.$user->id))) {
-            File::makeDirectory(storage_path('app/public/'.$user->id));
+        if (!File::isDirectory(storage_path('app/public/' . $user->id))) {
+            File::makeDirectory(storage_path('app/public/' . $user->id));
         }
 
-        $tmpFilePath = storage_path('app/public/tmp/' . $user->profile);
-        $userFilePath = storage_path('app/public/'.$user->id) .DIRECTORY_SEPARATOR .  $user->profile;
+        if ($request->profileImage) {
 
-        if (File::exists($tmpFilePath)) {
-            File::move($tmpFilePath, $userFilePath);
+            $tmpFilePath = storage_path('app/public/tmp/' . $user->profile);
+            $userFilePath = storage_path('app/public/' . $user->id) . DIRECTORY_SEPARATOR .  $user->profile;
+
+            if (File::exists($tmpFilePath)) {
+                File::move($tmpFilePath, $userFilePath);
+            }
         }
 
         return $user;
-
     }
 
     public function changePassword($validated)
-     {
+    {
 
         $user = User::find(Auth::user()->id)->update([
             'password' => Hash::make($validated['new_password']),
             'updated_user_id' => Auth::user()->id
         ]);
         return $user;
-
     }
 }

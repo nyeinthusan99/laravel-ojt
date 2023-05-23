@@ -34,5 +34,4 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
         return to_route('login');
     }
-
 }
